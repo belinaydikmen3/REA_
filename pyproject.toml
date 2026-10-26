@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gpower-clone"
+version = "1.0.0"
+description = "Clean-room independent G*Power 3.1.9.7 calculation engine for chi2-contingency tests (YZM301 K4)."
+readme = "README.md"
+authors = [{ name = "K4 Team" }]
+dependencies = [
+    "scipy>=1.10.0"
+]
+
+[project.scripts]
+gpower-clone = "src.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

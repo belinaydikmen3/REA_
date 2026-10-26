@@ -1,0 +1,22 @@
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# GPower binary protection (as instructed)
+GPower.exe
+GPowerNT.exe
+*.zip
+
+# Pytest cache
+.pytest_cache/
+.coverage
+htmlcov/

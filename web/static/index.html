@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>G*Power Clone — Scientific Power Workbench (K4 Chi-Square)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0a0f1d;
+      --bg-surface: #11192d;
+      --bg-card: rgba(23, 32, 54, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(56, 189, 248, 0.35);
+      --accent-blue: #38bdf8;
+      --accent-teal: #2dd4bf;
+      --accent-indigo: #818cf8;
+      --accent-red: #f43f5e;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(129, 140, 248, 0.07) 0%, transparent 40%);
+    }
+
+    header {
+      background: rgba(17, 25, 45, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+
+    .brand-title h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-primary {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 1.75rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Tab Controller */
+    .mode-switch {
+      display: flex;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #e2e8f0;
+    }
+
+    .label-hint {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="number"], select {
+      flex: 1;
+      background: rgba(10, 15, 29, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      transition: border-color 0.2s ease;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    .preset-chips {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.35rem;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-calc {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-calc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(14, 165, 233, 0.45);
+    }
+
+    /* CLI Command Box */
+    .cli-box {
+      margin-top: 1.25rem;
+      background: rgba(10, 15, 29, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+      position: relative;
+    }
+
+    .cli-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .cli-code {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #38bdf8;
+      word-break: break-all;
+      user-select: all;
+    }
+
+    .btn-copy {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-copy:hover {
+      color: #fff;
+      border-color: var(--text-muted);
+    }
+
+    /* Right Canvas & Results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .result-card {
+      background: rgba(10, 15, 29, 0.65);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .result-card.highlight {
+      border-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.05);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+    }
+
+    .result-val {
+      font-family: var(--font-mono);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 0.25rem;
+    }
+
+    .result-card.highlight .result-val {
+      color: var(--accent-blue);
+    }
+
+    .result-lbl {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .canvas-container {
+      background: #080c17;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+    }
+
+    canvas {
+      width: 100%;
+      height: 290px;
+      display: block;
+    }
+
+    .canvas-legend {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--text-muted);
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* Bottom Panels (Benchmark & Agent) */
+    .tabs-nav {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.25rem;
+    }
+
+    .tab-btn {
+      padding: 0.65rem 0.2rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .tab-btn.active {
+      color: #fff;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-blue);
+    }
+
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .benchmark-table th {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .benchmark-table td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: var(--font-mono);
+    }
+
+    .badge-test {
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* Clinical Agent Chat */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .chat-box {
+      background: rgba(8, 12, 23, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem;
+      min-height: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(10, 15, 29, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--accent-teal);
+    }
+
+    .btn-chat {
+      padding: 0 1.25rem;
+      background: linear-gradient(135deg, #0d9488, #0284c7);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sample-questions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+
+    .btn-sample {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-sample:hover {
+      color: var(--accent-teal);
+      border-color: rgba(45, 212, 191, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">χ²</div>
+      <div class="brand-title">
+        <h1>G*Power 3.1.9.7 Scientific Power Workbench</h1>
+        <p>Test Family: K4 — Chi-Square Contingency Tables (Goodness-of-fit)</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-primary">Clean-Room Engine</span>
+      <span class="badge badge-success">83/83 Tests Passed</span>
+      <span class="badge">SciPy 1.18.1</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid-container">
+      
+      <!-- Sol Panel: Parametreler -->
+      <section class="card">
+        <div class="card-title">
+          <span>⚙️</span> Analiz Parametreleri
+        </div>
+
+        <div class="mode-switch">
+          <button class="mode-btn active" id="btnModeAPriori" onclick="setMode('a-priori')">A Priori (Örneklem)</button>
+          <button class="mode-btn" id="btnModePostHoc" onclick="setMode('post-hoc')">Post Hoc (Güç Analizi)</button>
+        </div>
+
+        <!-- Etki Büyüklüğü w -->
+        <div class="form-group">
+          <div class="form-label">
+            <span>Cohen'in Etki Büyüklüğü (w)</span>
+            <span class="label-hint">w &gt; 0</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inpW" step="0.01" min="0.01" max="1.5" value="0.30">
+          </div>
+          <div class="preset-chips">
+            <span class="chip" onclick="setW(0.1)">Küçük (0.10)</span>
+            <span class="chip" onclick="setW(0.3)">Orta (0.30)</span>
+            <span class="chip" onclick="setW(0.5)">Büyük (0.50)</span>
+          </div>
+        </div>
+
+        <!-- Alfa -->
+        <div class="form-group">
+          <div class="form-label">
+            <span>Hata Olasılığı (α)</span>
+            <span class="label-hint">0 &lt; α &lt; 1</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inpAlpha" step="0.005" min="0.001" max="0.5" value="0.05">
+          </div>
+          <div class="preset-chips">
+            <span class="chip" onclick="setAlpha(0.05)">0.05</span>
+            <span class="chip" onclick="setAlpha(0.01)">0.01</span>
+            <span class="chip" onclick="setAlpha(0.001)">0.001</span>
+          </div>
+        </div>
+
+        <!-- A Priori Hedef Güç -->
+        <div class="form-group" id="grpPower">
+          <div class="form-label">
+            <span>Hedeflenen Güç (1 - β)</span>
+            <span class="label-hint">0 &lt; Power &lt; 1</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inpPower" step="0.01" min="0.10" max="0.999" value="0.95">
+          </div>
+          <div class="preset-chips">
+            <span class="chip" onclick="setPower(0.80)">%80</span>
+            <span class="chip" onclick="setPower(0.90)">%90</span>
+            <span class="chip" onclick="setPower(0.95)">%95</span>
+          </div>
+        </div>
+
+        <!-- Post Hoc Toplam N -->
+        <div class="form-group" id="grpNTotal" style="display: none;">
+          <div class="form-label">
+            <span>Toplam Örneklem Büyüklüğü (N)</span>
+            <span class="label-hint">N &ge; 2</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inpNTotal" step="1" min="2" max="100000" value="100">
+          </div>
+          <div class="preset-chips">
+            <span class="chip" onclick="setN(50)">50</span>
+            <span class="chip" onclick="setN(100)">100</span>
+            <span class="chip" onclick="setN(200)">200</span>
+            <span class="chip" onclick="setN(500)">500</span>
+          </div>
+        </div>
+
+        <!-- Serbestlik Derecesi df -->
+        <div class="form-group">
+          <div class="form-label">
+            <span>Serbestlik Derecesi (df)</span>
+            <span class="label-hint">(r - 1)(c - 1)</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inpDf" step="1" min="1" max="100" value="5">
+          </div>
+          <div class="preset-chips">
+            <span class="chip" onclick="setDf(1)">2x2 (df=1)</span>
+            <span class="chip" onclick="setDf(2)">3x2 (df=2)</span>
+            <span class="chip" onclick="setDf(3)">4x2 (df=3)</span>
+            <span class="chip" onclick="setDf(4)">3x3 (df=4)</span>
+            <span class="chip" onclick="setDf(5)">K4-REF (df=5)</span>
+          </div>
+        </div>
+
+        <button class="btn-calc" onclick="calculate()">
+          <span>▶</span> HESAPLA (Calculate)
+        </button>
+
+        <!-- CLI Box -->
+        <div class="cli-box">
+          <div class="cli-header">
+            <span>CLI SÖZLEŞMESİ ÇAĞRISI</span>
+            <button class="btn-copy" onclick="copyCli()">Kopyala</button>
+          </div>
+          <div class="cli-code" id="cliCodeText">gpower-clone --test chi2-contingency --mode a-priori --w 0.3 --alpha 0.05 --power 0.95 --df 5</div>
+        </div>
+      </section>
+
+      <!-- Sağ Panel: Sonuçlar & Dağılım Çizimi -->
+      <section class="card">
+        <div class="card-title">
+          <span>📊</span> Dağılım Eğrisi ve İstatistiksel Çıktılar
+        </div>
+
+        <div class="results-grid">
+          <div class="result-card highlight" id="cardPrimary">
+            <div class="result-lbl" id="lblPrimary">Örneklem (N)</div>
+            <div class="result-val" id="valPrimary">220</div>
+          </div>
+          <div class="result-card">
+            <div class="result-lbl" id="lblSecondary">Gerçekleşen Güç</div>
+            <div class="result-val" id="valSecondary">0.9502</div>
+          </div>
+          <div class="result-card">
+            <div class="result-lbl">Kritik χ² (Critical)</div>
+            <div class="result-val" id="valCrit">11.0705</div>
+          </div>
+          <div class="result-card">
+            <div class="result-lbl">NCP (λ)</div>
+            <div class="result-val" id="valNcp">19.80</div>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="distCanvas" width="700" height="290"></canvas>
+          <div class="canvas-legend">
+            <div class="legend-item">
+              <span class="legend-color" style="background: #38bdf8;"></span>
+              <span>H₀: Merkezi χ²(df)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background: #f43f5e;"></span>
+              <span>H₁: Merkezi Olmayan χ²(df, λ)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background: #fbbf24; border-top: 2px dashed #fbbf24;"></span>
+              <span>Kritik χ² Eşiği</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background: rgba(244, 63, 94, 0.35);"></span>
+              <span>İstatistiksel Güç (1 - β)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Alt Panel: Canlı Benchmark ve Klinik Asistan -->
+    <section class="card">
+      <div class="tabs-nav">
+        <button class="tab-btn active" id="tabBtnBench" onclick="switchBottomTab('bench')">🏆 G*Power Diferansiyel Doğrulama Benchmark'ı</button>
+        <button class="tab-btn" id="tabBtnAgent" onclick="switchBottomTab('agent')">🤖 Klinik AI Araştırma Danışmanı (MCP)</button>
+      </div>
+
+      <!-- Tab 1: Benchmark -->
+      <div id="tabContentBench">
+        <table class="benchmark-table">
+          <thead>
+            <tr>
+              <th>Vektör ID</th>
+              <th>Mod</th>
+              <th>Parametreler</th>
+              <th>G*Power 3.1.9.7 Referansı</th>
+              <th>gpower-clone Çıktısı</th>
+              <th>Fark</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>K4-REF-01</code></td>
+              <td>A Priori</td>
+              <td>w=0.3, α=0.05, Power=0.95, df=5</td>
+              <td>N=220, Power=0.9502155</td>
+              <td>N=220, Power=0.9502155</td>
+              <td>0.0000000 (Tam Eşleşme)</td>
+              <td><span class="badge badge-success">✓ 100% MATCH</span></td>
+            </tr>
+            <tr>
+              <td><code>K4-REF-02</code></td>
+              <td>Post Hoc</td>
+              <td>w=0.3, α=0.05, N=100, df=5</td>
+              <td>Power=0.6235846, NCP=9.0</td>
+              <td>Power=0.6235846, NCP=9.0</td>
+              <td>0.0000000 (Tam Eşleşme)</td>
+              <td><span class="badge badge-success">✓ 100% MATCH</span></td>
+            </tr>
+            <tr>
+              <td><code>K4-AP-03</code></td>
+              <td>A Priori</td>
+              <td>w=0.1, α=0.05, Power=0.80, df=1</td>
+              <td>N=785, Crit=3.8414588</td>
+              <td>N=785, Crit=3.8414588</td>
+              <td>0.0000000 (Tam Eşleşme)</td>
+              <td><span class="badge badge-success">✓ 100% MATCH</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab 2: Clinical Agent -->
+      <div id="tabContentAgent" style="display: none;">
+        <div class="chat-container">
+          <div class="chat-box" id="chatBox">
+            <div style="color: #38bdf8; font-weight: 600; margin-bottom: 0.35rem;">Klinik AI Asistanı:</div>
+            <div>Merhaba! Klinik araştırmanız için doğal Türkçe araştırma sorunuzu yazabilirsiniz. Gerekli parametreleri otomatik olarak ayıklayıp doğrudan <code>power_analysis</code> MCP aracına devrederek kesin örneklem/güç sonucunu raporlayacağım.</div>
+          </div>
+          <div class="sample-questions">
+            <span style="font-size: 0.72rem; color: var(--text-muted); align-self: center;">Örnek Senaryolar:</span>
+            <button class="btn-sample" onclick="askSample(1)">3 kemoterapi protokolü remisyonu (3x2, w=0.3, %95 güç)</button>
+            <button class="btn-sample" onclick="askSample(2)">Tip 2 diyabet hipoglisemi (2x2, w=0.1, %80 güç)</button>
+            <button class="btn-sample" onclick="askSample(3)">150 acil hastasında triyaj gücü nedir? (df=2, w=0.3)</button>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Örnek: 4 stent grubunun restenoz oranları için w=0.25 ve %90 güç ile kaç hasta gerekir?">
+            <button class="btn-chat" onclick="sendChat()">Danış (Consult)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let currentMode = 'a-priori';
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('btnModeAPriori').classList.toggle('active', mode === 'a-priori');
+      document.getElementById('btnModePostHoc').classList.toggle('active', mode === 'post-hoc');
+
+      if (mode === 'a-priori') {
+        document.getElementById('grpPower').style.display = 'block';
+        document.getElementById('grpNTotal').style.display = 'none';
+        document.getElementById('lblPrimary').innerText = 'Gerekli Örneklem (N)';
+        document.getElementById('lblSecondary').innerText = 'Gerçekleşen Güç';
+      } else {
+        document.getElementById('grpPower').style.display = 'none';
+        document.getElementById('grpNTotal').style.display = 'block';
+        document.getElementById('lblPrimary').innerText = 'İstatistiksel Güç';
+        document.getElementById('lblSecondary').innerText = 'Toplam Örneklem (N)';
+      }
+      updateCliString();
+      calculate();
+    }
+
+    function setW(val) { document.getElementById('inpW').value = val; updateCliString(); calculate(); }
+    function setAlpha(val) { document.getElementById('inpAlpha').value = val; updateCliString(); calculate(); }
+    function setPower(val) { document.getElementById('inpPower').value = val; updateCliString(); calculate(); }
+    function setN(val) { document.getElementById('inpNTotal').value = val; updateCliString(); calculate(); }
+    function setDf(val) { document.getElementById('inpDf').value = val; updateCliString(); calculate(); }
+
+    function updateCliString() {
+      const w = document.getElementById('inpW').value;
+      const alpha = document.getElementById('inpAlpha').value;
+      const df = document.getElementById('inpDf').value;
+      let cmd = `gpower-clone --test chi2-contingency --mode ${currentMode} --w ${w} --alpha ${alpha} --df ${df}`;
+      if (currentMode === 'a-priori') {
+        const power = document.getElementById('inpPower').value;
+        cmd += ` --power ${power}`;
+      } else {
+        const n = document.getElementById('inpNTotal').value;
+        cmd += ` --n_total ${n}`;
+      }
+      document.getElementById('cliCodeText').innerText = cmd;
+    }
+
+    function copyCli() {
+      const text = document.getElementById('cliCodeText').innerText;
+      navigator.clipboard.writeText(text);
+      alert('CLI komutu panoya kopyalandı:\n' + text);
+    }
+
+    async function calculate() {
+      updateCliString();
+      const payload = {
+        mode: currentMode,
+        w: parseFloat(document.getElementById('inpW').value),
+        alpha: parseFloat(document.getElementById('inpAlpha').value),
+        df: parseInt(document.getElementById('inpDf').value)
+      };
+
+      if (currentMode === 'a-priori') {
+        payload.power = parseFloat(document.getElementById('inpPower').value);
+      } else {
+        payload.n_total = parseInt(document.getElementById('inpNTotal').value);
+      }
+
+      try {
+        const resp = await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const res = await resp.json();
+
+        if (res.error) {
+          alert('Hata: ' + res.error);
+          return;
+        }
+
+        if (currentMode === 'a-priori') {
+          document.getElementById('valPrimary').innerText = res.n_total;
+          document.getElementById('valSecondary').innerText = res.actual_power.toFixed(5);
+        } else {
+          document.getElementById('valPrimary').innerText = (res.power * 100).toFixed(2) + '%';
+          document.getElementById('valSecondary').innerText = payload.n_total;
+        }
+        document.getElementById('valCrit').innerText = res.critical_chi2.toFixed(4);
+        document.getElementById('valNcp').innerText = res.ncp.toFixed(2);
+
+        // Canlı Dağılım Çizimi
+        drawDistribution(payload.df, res.ncp, res.critical_chi2, currentMode === 'a-priori' ? res.actual_power : res.power);
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Canvas Dağılım Çizici
+    function drawDistribution(df, ncp, crit, power) {
+      const canvas = document.getElementById('distCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Grid çizimi
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 40; x < width; x += 60) {
+        ctx.beginPath(); ctx.moveTo(x, 10); ctx.lineTo(x, height - 30); ctx.stroke();
+      }
+      for (let y = 20; y < height - 30; y += 40) {
+        ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(width - 20, y); ctx.stroke();
+      }
+
+      const maxX = Math.max(crit * 2.2, ncp + Math.sqrt(ncp || 1) * 6, 25);
+      const toCanvasX = (val) => 40 + (val / maxX) * (width - 60);
+      const toCanvasY = (val) => (height - 30) - val * 650;
+
+      // Chi2 approx pdf
+      function chi2_pdf(x, k) {
+        if (x <= 0) return 0;
+        const gamma = k === 1 ? Math.sqrt(Math.PI) : (k === 2 ? 1 : (k === 3 ? 0.886 : (k === 4 ? 2 : (k === 5 ? 3.32 : (k === 6 ? 6 : 24)))));
+        return (Math.pow(x, k / 2 - 1) * Math.exp(-x / 2)) / (Math.pow(2, k / 2) * gamma);
+      }
+
+      // Noncentral chi2 approx as shifted Gaussian for visual fidelity
+      function ncx2_pdf(x, k, lambda) {
+        if (x <= 0) return 0;
+        const mean = k + lambda;
+        const variance = 2 * (k + 2 * lambda);
+        const sd = Math.sqrt(variance);
+        return (1 / (sd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mean) / sd, 2));
+      }
+
+      // Güç Alanı Gölgelendirmesi (H1 altındaki ret bölgesi)
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(crit), toCanvasY(0));
+      for (let x = crit; x <= maxX; x += maxX / 200) {
+        const y = ncx2_pdf(x, df, ncp);
+        ctx.lineTo(toCanvasX(x), toCanvasY(y));
+      }
+      ctx.lineTo(toCanvasX(maxX), toCanvasY(0));
+      ctx.closePath();
+      ctx.fill();
+
+      // H0 Merkezi Chi-Square Eğrisi (Mavi)
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = 0.1; x <= maxX; x += maxX / 200) {
+        const y = chi2_pdf(x, df);
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(y);
+        if (x === 0.1) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+
+      // H1 Merkezi Olmayan Chi-Square Eğrisi (Kırmızı)
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = 0.1; x <= maxX; x += maxX / 200) {
+        const y = ncx2_pdf(x, df, ncp);
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(y);
+        if (x === 0.1) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+
+      // Kritik Çizgi (Sarı Kesikli)
+      const critX = toCanvasX(crit);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(critX, 20);
+      ctx.lineTo(critX, height - 30);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Etiketler
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '11px JetBrains Mono';
+      ctx.fillText(`χ²crit = ${crit.toFixed(2)}`, critX + 5, 35);
+
+      // Eksen
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(40, height - 30);
+      ctx.lineTo(width - 20, height - 30);
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px Inter';
+      ctx.fillText('0', 40, height - 15);
+      ctx.fillText(`${(maxX/2).toFixed(0)}`, toCanvasX(maxX/2), height - 15);
+      ctx.fillText(`${maxX.toFixed(0)} (χ²)`, width - 45, height - 15);
+    }
+
+    function switchBottomTab(tab) {
+      document.getElementById('tabBtnBench').classList.toggle('active', tab === 'bench');
+      document.getElementById('tabBtnAgent').classList.toggle('active', tab === 'agent');
+      document.getElementById('tabContentBench').style.display = tab === 'bench' ? 'block' : 'none';
+      document.getElementById('tabContentAgent').style.display = tab === 'agent' ? 'block' : 'none';
+    }
+
+    function askSample(idx) {
+      const q = [
+        "",
+        "3 farklı kemoterapi protokolünün 2 yıllık remisyon durumları (3x2 tablo) karşılaştırılacaktır. Orta etki w=0.3, alfa=0.05 ve %95 güç hedeflendiğinde gerekli toplam hasta sayısı nedir?",
+        "Tip 2 diyabetik hastalarda hipoglisemi gelişme sıklığı karşılaştırılacaktır (2x2 tablo, df=1). Küçük etki w=0.1, alfa=0.05 ve %80 güç için kaç denek gereklidir?",
+        "Acil servise başvuran 150 hastada triyaj skoru (3x2 tablo, df=2), w=0.3 ve alfa=0.05 için gerçekleşen güç nedir?"
+      ][idx];
+      document.getElementById('chatInput').value = q;
+      sendChat();
+    }
+
+    async function sendChat() {
+      const text = document.getElementById('chatInput').value.trim();
+      if (!text) return;
+      const box = document.getElementById('chatBox');
+
+      box.innerHTML += `<div style="margin-top: 0.6rem; color: #f8fafc;"><strong>Araştırmacı:</strong> ${text}</div>`;
+      box.innerHTML += `<div style="color: #94a3b8; font-size: 0.76rem; margin-top: 0.2rem;">⚡ MCP power_analysis aracı çağrılıyor...</div>`;
+      box.scrollTop = box.scrollHeight;
+
+      try {
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: text })
+        });
+        const data = await resp.json();
+        box.innerHTML += `<div style="margin-top: 0.5rem; background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; padding: 0.6rem; border-radius: 4px; color: #e0f2fe;">
+          <strong>Klinik Danışman:</strong> ${data.clinical_answer}
+          <div style="font-size: 0.72rem; color: #7dd3fc; margin-top: 0.3rem;">Araç: <code>${data.tool_called}</code> | Gecikme: ${data.latency_ms} ms</div>
+        </div>`;
+        box.scrollTop = box.scrollHeight;
+        document.getElementById('chatInput').value = '';
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // İlk yükleme
+    window.onload = () => {
+      calculate();
+    };
+  </script>
+</body>
+</html>

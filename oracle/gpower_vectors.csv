@@ -1,0 +1,40 @@
+vector_id,mode,w,alpha,power,n_total,df,critical_chi2,ncp,actual_power,status,notes
+K4-REF-01,a-priori,0.3,0.05,0.95,220,5,11.0704977,19.8,0.9502155,VALID,Contract reference vector a priori
+K4-REF-02,post-hoc,0.3,0.05,0.6235846,100,5,11.0704977,9.0,0.6235846,VALID,Contract reference vector post hoc
+K4-AP-03,a-priori,0.1,0.05,0.8,785,1,3.8414588,7.85,0.8000569,VALID,"A priori grid search vector (w=0.1, alpha=0.05, df=1)"
+K4-AP-04,a-priori,0.1,0.05,0.9,1266,2,5.9914645,12.66,0.9001455,VALID,"A priori grid search vector (w=0.1, alpha=0.05, df=2)"
+K4-AP-05,a-priori,0.1,0.01,0.95,2433,4,13.2767041,24.33,0.9500091,VALID,"A priori grid search vector (w=0.1, alpha=0.01, df=4)"
+K4-AP-06,a-priori,0.2,0.05,0.8,197,1,3.8414588,7.88,0.8015507,VALID,"A priori grid search vector (w=0.2, alpha=0.05, df=1)"
+K4-AP-07,a-priori,0.2,0.05,0.85,308,3,7.8147279,12.32,0.8505955,VALID,"A priori grid search vector (w=0.2, alpha=0.05, df=3)"
+K4-AP-08,a-priori,0.2,0.01,0.9,580,6,16.8118938,23.2,0.9003106,VALID,"A priori grid search vector (w=0.2, alpha=0.01, df=6)"
+K4-AP-09,a-priori,0.3,0.05,0.8,108,2,5.9914645,9.72,0.8036939,VALID,"A priori grid search vector (w=0.3, alpha=0.05, df=2)"
+K4-AP-10,a-priori,0.3,0.05,0.9,172,4,9.487729,15.48,0.901566,VALID,"A priori grid search vector (w=0.3, alpha=0.05, df=4)"
+K4-AP-11,a-priori,0.3,0.01,0.95,326,8,20.090235,29.34,0.9504104,VALID,"A priori grid search vector (w=0.3, alpha=0.01, df=8)"
+K4-AP-12,a-priori,0.5,0.05,0.8,32,1,3.8414588,8.0,0.8074304,VALID,"A priori grid search vector (w=0.5, alpha=0.05, df=1)"
+K4-AP-13,a-priori,0.5,0.05,0.95,62,2,5.9914645,15.5,0.9507228,VALID,"A priori grid search vector (w=0.5, alpha=0.05, df=2)"
+K4-AP-14,a-priori,0.5,0.01,0.99,134,5,15.0862725,33.5,0.9900043,VALID,"A priori grid search vector (w=0.5, alpha=0.01, df=5)"
+K4-AP-15,a-priori,0.8,0.05,0.95,27,3,7.8147279,17.28,0.951301,VALID,"A priori grid search vector (w=0.8, alpha=0.05, df=3)"
+K4-AP-16,a-priori,0.05,0.05,0.8,3854,2,5.9914645,9.635,0.8000136,VALID,"A priori grid search vector (w=0.05, alpha=0.05, df=2)"
+K4-AP-17,a-priori,0.3,0.1,0.9,96,1,2.7055435,8.64,0.9022618,VALID,"A priori grid search vector (w=0.3, alpha=0.1, df=1)"
+K4-AP-18,a-priori,0.25,0.001,0.95,509,4,18.466827,31.8125,0.9504261,VALID,"A priori grid search vector (w=0.25, alpha=0.001, df=4)"
+K4-PH-19,post-hoc,0.1,0.05,0.1089546,50,1,3.8414588,0.5,0.1089546,VALID,"Post hoc grid vector (w=0.1, n=50, df=1)"
+K4-PH-20,post-hoc,0.1,0.05,0.1922379,200,3,7.8147279,2.0,0.1922379,VALID,"Post hoc grid vector (w=0.1, n=200, df=3)"
+K4-PH-21,post-hoc,0.1,0.01,0.1660777,500,5,15.0862725,5.0,0.1660777,VALID,"Post hoc grid vector (w=0.1, n=500, df=5)"
+K4-PH-22,post-hoc,0.2,0.05,0.3406076,80,2,5.9914645,3.2,0.3406076,VALID,"Post hoc grid vector (w=0.2, n=80, df=2)"
+K4-PH-23,post-hoc,0.2,0.05,0.4701017,150,4,9.487729,6.0,0.4701017,VALID,"Post hoc grid vector (w=0.2, n=150, df=4)"
+K4-PH-24,post-hoc,0.2,0.01,0.5130509,300,6,16.8118938,12.0,0.5130509,VALID,"Post hoc grid vector (w=0.2, n=300, df=6)"
+K4-PH-25,post-hoc,0.3,0.05,0.6420152,60,1,3.8414588,5.4,0.6420152,VALID,"Post hoc grid vector (w=0.3, n=60, df=1)"
+K4-PH-26,post-hoc,0.3,0.05,0.7958511,120,3,7.8147279,10.8,0.7958511,VALID,"Post hoc grid vector (w=0.3, n=120, df=3)"
+K4-PH-27,post-hoc,0.3,0.01,0.9080788,250,5,15.0862725,22.5,0.9080788,VALID,"Post hoc grid vector (w=0.3, n=250, df=5)"
+K4-PH-28,post-hoc,0.5,0.05,0.8853791,40,1,3.8414588,10.0,0.8853791,VALID,"Post hoc grid vector (w=0.5, n=40, df=1)"
+K4-PH-29,post-hoc,0.5,0.05,0.9893643,100,4,9.487729,25.0,0.9893643,VALID,"Post hoc grid vector (w=0.5, n=100, df=4)"
+K4-PH-30,post-hoc,0.5,0.01,0.9997014,200,6,16.8118938,50.0,0.9997014,VALID,"Post hoc grid vector (w=0.5, n=200, df=6)"
+K4-PH-31,post-hoc,0.8,0.05,0.9995832,50,2,5.9914645,32.0,0.9995832,VALID,"Post hoc grid vector (w=0.8, n=50, df=2)"
+K4-PH-32,post-hoc,0.05,0.05,0.2330023,1000,3,7.8147279,2.5,0.2330023,VALID,"Post hoc grid vector (w=0.05, n=1000, df=3)"
+K4-PH-33,post-hoc,0.3,0.1,0.774018,80,2,4.6051702,7.2,0.774018,VALID,"Post hoc grid vector (w=0.3, n=80, df=2)"
+K4-ERR-01,a-priori,-0.1,0.05,0.8,,1,,,,OUT_OF_RANGE,Negatif w
+K4-ERR-02,a-priori,0.3,1.5,0.8,,1,,,,OUT_OF_RANGE,Alpha >= 1
+K4-ERR-03,a-priori,0.3,0.05,0.04,,1,,,,INCONSISTENT,Power <= Alpha
+K4-ERR-04,a-priori,0.3,0.05,0.95,,1.5,,,,INVALID_VALUE,Ondalık df
+K4-ERR-05,post-hoc,0.3,0.05,,1,1,,,,OUT_OF_RANGE,n_total < 2
+K4-ERR-06,post-hoc,0.3,0.05,,100,0,,,,OUT_OF_RANGE,df < 1
